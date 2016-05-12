@@ -17,5 +17,12 @@ namespace cd
 */
 CONFDESC_API void printInfo();
 
+class CONFDESC_API  ConfDesc {
 
-} // namespace baselib
+public:
+    ConfDesc(std::string);
+
+};
+
+
+} // namespace cd

@@ -4,7 +4,7 @@
 # 
 
 # find_package(THIRDPARTY REQUIRED)
-
+find_package(Boost REQUIRED)
 
 # 
 # Library name and options
@@ -32,10 +32,13 @@ set(source_path  "${CMAKE_CURRENT_SOURCE_DIR}/source")
 
 set(headers
     ${include_path}/confdesc.h
+    ${include_path}/datatypes.h
+    ${include_path}/configitem.h
 )
 
 set(sources
     ${source_path}/confdesc.cpp
+    ${source_path}/configitem.cpp
 )
 
 # Group source files
