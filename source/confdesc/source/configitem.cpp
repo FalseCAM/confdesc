@@ -1,75 +1,83 @@
 #include <boost/property_tree/json_parser.hpp>
-#include <boost/property_tree/ptree.hpp>
 
 #include <confdesc/configitem.h>
+#include <exception>
 
 namespace cd {
 
 ConfigItem::ConfigItem(std::string json) {
   this->json = json;
-  parse();
-}
-
-void ConfigItem::parse() {
-  boost::property_tree::ptree ptconfig;
-  std::stringstream ssconfig(json);
-  boost::property_tree::read_json(ssconfig, ptconfig);
-
-  if (ptconfig.get_optional<std::string>("name")) {
-    this->name = ptconfig.get<std::string>("name");
-  }
-
-  if (ptconfig.get_optional<std::string>("type")) {
-    this->type = cd::dataTypeFromString(ptconfig.get<std::string>("type"));
-  }
-
-  if (ptconfig.get_optional<long>("min")) {
-    this->min = ptconfig.get<long>("min");
-  }
-
-  if (ptconfig.get_optional<long>("max")) {
-    this->max = ptconfig.get<long>("max");
-  }
-
-  parseValue();
-}
-
-void ConfigItem::parseValue() {
-    boost::property_tree::ptree ptconfig;
     std::stringstream ssconfig(json);
     boost::property_tree::read_json(ssconfig, ptconfig);
-  if (type == cd::DataType::BOOLEAN) {
-    if (ptconfig.get_optional<bool>("value")) {
-      this->boolValue = ptconfig.get<bool>("value");
+}
+
+cd::DataType ConfigItem::getType() {
+    if (ptconfig.get_optional<std::string>("type")) {
+      return cd::dataTypeFromString(ptconfig.get<std::string>("type"));
+    }else {
+        throw std::runtime_error("does not contain type");
     }
-  } else if (type == cd::DataType::INTEGER) {
-    if (ptconfig.get_optional<long>("value")) {
-      this->intValue = ptconfig.get<long>("value");
-    }
-  } else if (type == cd::DataType::FLOAT) {
-    if (ptconfig.get_optional<double>("value")) {
-      this->floatValue = ptconfig.get<double>("value");
-    }
-  } else if (type == cd::DataType::STRING) {
-    if (ptconfig.get_optional<std::string>("value")) {
-      this->strValue = ptconfig.get<std::string>("value");
-    }
+}
+
+std::string ConfigItem::getTypeAsString()
+{
+    return cd::dataTypeToString(getType());
+}
+
+void ConfigItem::setType(std::string type)
+{
+    ptconfig.put("type", type);
+}
+
+void ConfigItem::setType(DataType type)
+{
+    ptconfig.put("type", cd::dataTypeToString(type));
+}
+
+std::string ConfigItem::getName() {
+  if (ptconfig.get_optional<std::string>("name")) {
+    return ptconfig.get<std::string>("name");
+  } else {
+    throw std::runtime_error("does not contain name");
   }
 }
 
-std::string ConfigItem::getType() { return cd::dataTypeToString(type); }
+void ConfigItem::setName(std::string name)
+{
+    ptconfig.put("name", name);
+}
 
-std::string ConfigItem::getName() { return name; }
+long ConfigItem::getMin() {
+  if (ptconfig.get_optional<long>("min")) {
+    return ptconfig.get<long>("min");
+  } else {
+    return 0;
+  }
+}
 
-long ConfigItem::getMin() { return min; }
+void ConfigItem::setMin(long min)
+{
+    ptconfig.put("min", min);
+}
 
-long ConfigItem::getMax() { return max; }
+long ConfigItem::getMax() {
+  if (ptconfig.get_optional<long>("max")) {
+    return ptconfig.get<long>("max");
+  } else {
+    return 0;
+  }
+}
 
-template <> long ConfigItem::getValue<long>(){ return intValue; }
-template <> int ConfigItem::getValue<int>(){ return intValue; }
-template <> bool ConfigItem::getValue<bool>(){ return boolValue; }
-template <> float ConfigItem::getValue<float>(){ return floatValue; }
-template <> double ConfigItem::getValue<double>(){ return floatValue; }
-template <> std::string ConfigItem::getValue<std::string>(){ return strValue; }
+void ConfigItem::setMax(long max)
+{
+    ptconfig.put("max", max);
+}
+
+std::string ConfigItem::toString()
+{
+    std::stringstream ss;
+    boost::property_tree::write_json(ss, ptconfig);
+    return ss.str();
+}
 
 }

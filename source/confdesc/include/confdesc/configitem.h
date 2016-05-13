@@ -1,42 +1,55 @@
 #ifndef CONFIGITEM_H
 #define CONFIGITEM_H
 
-#include <confdesc/datatypes.h>
 #include <string>
 #include <stdexcept>
+#include <boost/property_tree/ptree.hpp>
+#include <confdesc/datatypes.h>
+#include <confdesc/confdesc_api.h>
 
 namespace cd {
 
-class ConfigItem {
+class CONFDESC_API ConfigItem {
 public:
   ConfigItem(std::string json);
 
+  DataType getType();
+  std::string getTypeAsString();
+  void setType(std::string type);
+  void setType(cd::DataType type);
 
-  std::string getType();
   std::string getName();
-  long getMin();
-  long getMax();
+  void setName(std::string name);
 
-  template<class T> T getValue(){ return std::invalid_argument("Type not supported!"); }
+  long getMin();
+  void setMin(long min);
+
+  long getMax();
+  void setMax(long max);
+
+  template<typename Type>
+  Type getValue()
+  {
+      if (ptconfig.get_optional<Type>("value")) {
+              return ptconfig.get<Type>("value");
+            }else {
+              throw std::runtime_error("does not contain value");
+      }
+  }
+
+  template<typename Type>
+  void setValue(Type value)
+  {
+      ptconfig.put("value", value);
+  }
+
+  std::string toString();
 
 protected:
 
-  void parse();
-  void parseValue();
+  boost::property_tree::ptree ptconfig;
 
   std::string json;
-
-  std::string name;
-
-  cd::DataType type;
-
-  long intValue;
-  std::string strValue;
-  double floatValue;
-  bool boolValue;
-
-  long min;
-  long max;
 };
 }
 
