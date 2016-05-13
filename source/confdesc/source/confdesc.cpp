@@ -2,13 +2,14 @@
 #include <fstream>
 #include <iostream>
 
+#include <boost/foreach.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/property_tree/ptree.hpp>
-#include <boost/foreach.hpp>
 
 #include <confdesc/confdesc-version.h>
 
 #include <confdesc/confdesc.h>
+#include <confdesc/configitem.h>
 
 namespace cd {
 
@@ -54,6 +55,16 @@ void printInfo() {
   }
 }
 
-ConfDesc::ConfDesc(std::string) {}
-
-} // namespace cd
+ConfDesc::ConfDesc(std::string json) {
+  std::stringstream ssconfig(json);
+  boost::property_tree::read_json(ssconfig, ptconfig);
+  if (ptconfig.get_child_optional("confdesc")) {
+    BOOST_FOREACH (const boost::property_tree::ptree::value_type& child,
+                   ptconfig.get_child("confdesc")) {
+      boost::property_tree::ptree ptconfig = child.second;
+      cd::ConfigItem item(ptconfig);
+      items[item.getName()] = item;
+    }
+  }
+}
+}  // namespace cd

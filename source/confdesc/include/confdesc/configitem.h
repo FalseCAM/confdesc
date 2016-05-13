@@ -1,17 +1,19 @@
 #ifndef CONFIGITEM_H
 #define CONFIGITEM_H
 
-#include <string>
-#include <stdexcept>
-#include <boost/property_tree/ptree.hpp>
-#include <confdesc/datatypes.h>
 #include <confdesc/confdesc_api.h>
+#include <confdesc/datatypes.h>
+#include <boost/property_tree/ptree.hpp>
+#include <stdexcept>
+#include <string>
 
 namespace cd {
 
 class CONFDESC_API ConfigItem {
-public:
+ public:
+  ConfigItem();
   ConfigItem(std::string json);
+  ConfigItem(boost::property_tree::ptree ptconfig);
 
   DataType getType();
   std::string getTypeAsString();
@@ -27,30 +29,25 @@ public:
   long getMax();
   void setMax(long max);
 
-  template<typename Type>
-  Type getValue()
-  {
-      if (ptconfig.get_optional<Type>("value")) {
-              return ptconfig.get<Type>("value");
-            }else {
-              throw std::runtime_error("does not contain value");
-      }
+  template <typename Type>
+  Type getValue() {
+    if (ptconfig.get_optional<Type>("value")) {
+      return ptconfig.get<Type>("value");
+    } else {
+      throw std::runtime_error("does not contain value");
+    }
   }
 
-  template<typename Type>
-  void setValue(Type value)
-  {
-      ptconfig.put("value", value);
+  template <typename Type>
+  void setValue(Type value) {
+    ptconfig.put("value", value);
   }
 
   std::string toString();
 
-protected:
-
+ protected:
   boost::property_tree::ptree ptconfig;
-
-  std::string json;
 };
 }
 
-#endif // CONFIGITEM_H
+#endif  // CONFIGITEM_H
