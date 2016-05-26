@@ -44,6 +44,18 @@ std::string ConfigItem::getName() {
 
 void ConfigItem::setName(std::string name) { ptconfig.put("name", name); }
 
+std::string ConfigItem::getDescription() {
+  if (ptconfig.get_optional<std::string>("description")) {
+    return ptconfig.get<std::string>("description");
+  } else {
+    return "";
+  }
+}
+
+void ConfigItem::setDescription(std::string description) {
+  ptconfig.put("description", description);
+}
+
 long ConfigItem::getMin() {
   if (ptconfig.get_optional<long>("min")) {
     return ptconfig.get<long>("min");

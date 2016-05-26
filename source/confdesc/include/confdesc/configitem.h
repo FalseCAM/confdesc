@@ -23,6 +23,9 @@ class CONFDESC_API ConfigItem {
   std::string getName();
   void setName(std::string name);
 
+  std::string getDescription();
+  void setDescription(std::string description);
+
   long getMin();
   void setMin(long min);
 
