@@ -10,7 +10,4 @@ node {
   stage 'Package'
    sh 'cd build && make pack'
 
-  stage 'PostBuild'
-   publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: 'build/docs/api-docs/html', reportFiles: 'index.html', reportName: 'Doxygen'])
-
 }
