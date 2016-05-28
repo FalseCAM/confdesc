@@ -1,6 +1,7 @@
 node {
   stage 'Checkout'
    checkout scm
+   sh 'git submodule update --init --recursive'
 
   stage 'Build'
    sh 'mkdir -p build'
