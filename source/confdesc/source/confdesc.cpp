@@ -63,7 +63,8 @@ ConfDesc::ConfDesc(std::string json) {
                    ptconfig.get_child("confdesc")) {
       boost::property_tree::ptree ptconfig = child.second;
       cd::ConfigItem item(ptconfig);
-      items[item.getName()] = item;
+      std::string name = item.getName();
+      items[name] = item;
     }
   }
 }

@@ -53,24 +53,34 @@ std::string ConfigItem::getDescription() {
 }
 
 void ConfigItem::setDescription(std::string description) {
-  ptconfig.put("description", description);
+    ptconfig.put("description", description);
+}
+
+bool ConfigItem::hasMin()
+{
+    return ptconfig.get_optional<long>("min")?true:false;
 }
 
 long ConfigItem::getMin() {
   if (ptconfig.get_optional<long>("min")) {
     return ptconfig.get<long>("min");
   } else {
-    return 0;
+    throw std::runtime_error("has no min");
   }
 }
 
 void ConfigItem::setMin(long min) { ptconfig.put("min", min); }
 
+bool ConfigItem::hasMax()
+{
+    return ptconfig.get_optional<long>("max")?true:false;
+}
+
 long ConfigItem::getMax() {
   if (ptconfig.get_optional<long>("max")) {
     return ptconfig.get<long>("max");
   } else {
-    return 0;
+    throw std::runtime_error("has no max");
   }
 }
 

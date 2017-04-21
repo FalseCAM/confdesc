@@ -26,9 +26,11 @@ class CONFDESC_API ConfigItem {
   std::string getDescription();
   void setDescription(std::string description);
 
+  bool hasMin();
   long getMin();
   void setMin(long min);
 
+  bool hasMax();
   long getMax();
   void setMax(long max);
 
